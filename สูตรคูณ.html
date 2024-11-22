@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบคำนวณหาแม่สูตรคูณแบบอลังการ</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: radial-gradient(circle at top left, #ffafbd, #ffc3a0);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            color: #fff;
+        }
+
+        h1 {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+            background: linear-gradient(45deg, #ff512f, #dd2476, #24c6dc);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        label {
+            font-size: 1.8em;
+            color: #fff;
+            margin-bottom: 15px;
+            display: block;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        input[type="text"] {
+            padding: 15px;
+            width: 80%;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        button {
+            background-image: linear-gradient(to right, #ff512f, #f09819, #24c6dc);
+            color: white;
+            padding: 15px 50px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        button:hover {
+            transform: scale(1.2);
+            box-shadow: 0 20px 40px rgba(255, 81, 47, 0.7);
+        }
+
+        #result {
+            margin-top: 30px;
+            font-size: 1.8em;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        #result p {
+            opacity: 0;
+            margin: 10px 0;
+            font-size: 1.5em;
+        }
+
+        /* เอฟเฟกต์การเคลื่อนที่ */
+        .fadeIn {
+            animation: fadeIn 1s forwards;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .slideDown {
+            animation: slideDown 1s forwards;
+        }
+
+        @keyframes slideDown {
+            0% { opacity: 0; transform: translateY(-50px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .slideUp {
+            animation: slideUp 1s forwards;
+        }
+
+        @keyframes slideUp {
+            0% { opacity: 0; transform: translateY(50px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .slideLeft {
+            animation: slideLeft 1s forwards;
+        }
+
+        @keyframes slideLeft {
+            0% { opacity: 0; transform: translateX(-50px); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+
+        .slideRight {
+            animation: slideRight 1s forwards;
+        }
+
+        @keyframes slideRight {
+            0% { opacity: 0; transform: translateX(50px); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+
+        .rotate {
+            animation: rotateIn 1s forwards;
+        }
+
+        @keyframes rotateIn {
+            0% { opacity: 0; transform: rotate(-360deg); }
+            100% { opacity: 1; transform: rotate(0deg); }
+        }
+    </style>
+    <script>
+        function calculateMultiplicationTable() {
+            let number = document.getElementById("number").value;
+            let resultDiv = document.getElementById("result");
+            resultDiv.innerHTML = "";  // ล้างผลลัพธ์เก่าออกก่อน
+
+            if (isNaN(number) || number === "") {
+                resultDiv.innerHTML = "<p style='color:red;'>กรุณากรอกตัวเลขที่ถูกต้อง</p>";
+                return;
+            }
+
+            let animations = ['fadeIn', 'slideDown', 'slideUp', 'slideLeft', 'slideRight', 'rotate'];
+            let resultHTML = '';
+
+            for (let i = 1; i <= 12; i++) {
+                let randomAnimation = animations[Math.floor(Math.random() * animations.length)];
+                resultHTML += `<p class="${randomAnimation}">${number} x ${i} = ${number * i}</p>`;
+            }
+
+            resultDiv.innerHTML = resultHTML;
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>คำนวณแม่สูตรคูณ</h1>
+        <label for="number">กรอกตัวเลข:</label>
+        <input type="text" id="number" placeholder="กรอกเลขที่ต้องการ">
+        <button onclick="calculateMultiplicationTable()">คำนวณ</button>
+
+        <div id="result"></div>
+    </div>
+</body>
+</html>

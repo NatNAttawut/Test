@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ตรวจสอบข้อมูลซ้ำ</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            max-width: 600px;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        p {
+            text-align: center;
+            color: #555;
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            resize: none;
+            outline: none;
+            box-sizing: border-box;
+        }
+        textarea:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.25);
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            font-size: 16px;
+            color: #333;
+            white-space: pre-wrap;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            textarea {
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="ข้อมูลไม่ซ้ำ.html"><button type="button" class="btn btn-primary">ตรวจสอบข้อมูลที่ไม่ซ้ำ</button></a>
+        <a href="แสดงข้อมูลที่ซ้ำเพียง1ข้อมูล.html"><button type="button" class="btn btn-primary">แสดงข้อมูลไม่ซ้ำ</button></a>
+        
+        <h1>ตรวจสอบข้อมูลซ้ำ</h1>
+        <p>กรอกข้อมูลแต่ละรายการแยกด้วยบรรทัดใหม่</p>
+        <textarea id="dataInput" placeholder="กรอกข้อมูลที่นี่..."></textarea>
+        <button onclick="checkDuplicates()">ตรวจสอบข้อมูลซ้ำ</button>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function checkDuplicates() {
+    const dataInput = document.getElementById('dataInput').value.trim();
+    const dataArray = dataInput.split(/\r?\n/).map(item => item.trim());
+    
+    let duplicates = [];
+    let uniqueData = new Map(); // ใช้ Map เพื่อเก็บข้อมูลและบรรทัดที่เจอครั้งแรก
+
+    dataArray.forEach((item, index) => {
+        if (item !== "") {
+            if (uniqueData.has(item)) {
+                duplicates.push(`ข้อมูล: "${item}" พบครั้งแรกที่บรรทัด ${uniqueData.get(item)} และซ้ำที่บรรทัด ${index + 1}`);
+            } else {
+                uniqueData.set(item, index + 1); // บันทึกบรรทัดแรกที่เจอข้อมูลนี้
+            }
+        }
+    });
+
+    const resultDiv = document.getElementById('result');
+    if (duplicates.length > 0) {
+        resultDiv.innerHTML = `ข้อมูลซ้ำ:\n${duplicates.join('\n')}`;
+        resultDiv.style.backgroundColor = "#ffe6e6"; // สีพื้นหลังเวลาพบข้อมูลซ้ำ
+        resultDiv.style.border = "1px solid #ff4d4d";
+    } else {
+        resultDiv.innerHTML = "ไม่พบข้อมูลซ้ำ";
+        resultDiv.style.backgroundColor = "#e6ffe6"; // สีพื้นหลังเวลาข้อมูลไม่มีซ้ำ
+        resultDiv.style.border = "1px solid #4dff88";
+    }
+}
+
+    </script>
+</body>
+</html>

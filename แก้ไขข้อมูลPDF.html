@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Viewer and Editor</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px; /* เพิ่มความกว้างของคอนเทนเนอร์ */
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        #pdf-canvas {
+            width: 100%;
+            margin-top: 20px;
+            border: 1px solid #ccc; /* เพิ่มขอบให้กับ canvas */
+            position: relative; /* เพิ่มตำแหน่ง relative สำหรับ canvas */
+            z-index: 1; /* ตั้งค่า z-index ของ canvas */
+        }
+
+        h3 {
+            margin: 10px 0;
+        }
+
+        p {
+            white-space: pre-wrap;
+        }
+
+        .draggable-text {
+            position: absolute;
+            cursor: move;
+            color: black;
+            font-size: 12px;
+            border: 1px dashed gray;
+            padding: 2px;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: block; /* เปลี่ยนจาก none เป็น block เพื่อแสดงข้อความ */
+            z-index: 2; /* ตั้งค่า z-index ให้สูงกว่า canvas */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Upload PDF File</h1>
+        <input type="file" id="file-input" accept="application/pdf">
+        <div id="pdf-info"></div>
+        <canvas id="pdf-canvas"></canvas>
+        <button id="add-text-btn">Add Text</button>
+        <button id="save-pdf-btn">Save PDF</button>
+    </div>
+
+    <script>
+        let pdfDoc;
+        let currentPdfBytes;
+        let pageNum = 1;
+        const fileInput = document.getElementById('file-input');
+        const pdfInfo = document.getElementById('pdf-info');
+        const pdfCanvas = document.getElementById('pdf-canvas');
+        const addTextBtn = document.getElementById('add-text-btn');
+        const savePdfBtn = document.getElementById('save-pdf-btn');
+        const draggableTexts = []; // เก็บข้อความที่เพิ่ม
+
+        fileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file && file.type === 'application/pdf') {
+                pdfInfo.innerHTML = `
+                    <h3>File Information:</h3>
+                    <p><strong>Name:</strong> ${file.name}</p>
+                    <p><strong>Size:</strong> ${(file.size / 1024).toFixed(2)} KB</p>
+                    <p><strong>Type:</strong> ${file.type}</p>
+                `;
+
+                const fileReader = new FileReader();
+                fileReader.onload = async function() {
+                    const typedarray = new Uint8Array(this.result);
+                    currentPdfBytes = typedarray;
+                    pdfDoc = await PDFLib.PDFDocument.load(typedarray);
+                    renderPage(pageNum);
+                };
+
+                fileReader.readAsArrayBuffer(file);
+            } else {
+                pdfInfo.innerHTML = 'Please upload a valid PDF file.';
+            }
+        });
+
+        async function renderPage(num) {
+            const pdfjsDoc = await pdfjsLib.getDocument({ data: currentPdfBytes }).promise;
+            const pdfPage = await pdfjsDoc.getPage(num);
+            const scale = 2.0; // ขยายขนาด
+            const viewport = pdfPage.getViewport({ scale: scale });
+            pdfCanvas.height = viewport.height;
+            pdfCanvas.width = viewport.width;
+
+            const context = pdfCanvas.getContext('2d');
+            const renderContext = {
+                canvasContext: context,
+                viewport: viewport,
+            };
+            await pdfPage.render(renderContext).promise;
+
+            // แสดงข้อความที่เพิ่มลงใน canvas
+            showDraggableTexts();
+        }
+
+        function showDraggableTexts() {
+            // ลบข้อความที่มีอยู่ก่อนหน้า
+            const existingTexts = document.querySelectorAll('.draggable-text');
+            existingTexts.forEach(text => text.remove());
+
+            // แสดงข้อความใหม่
+            draggableTexts.forEach(textObj => {
+                const textDiv = document.createElement('div');
+                textDiv.textContent = textObj.text;
+                textDiv.classList.add('draggable-text');
+                textDiv.style.left = `${textObj.x}px`;
+                textDiv.style.top = `${textObj.y}px`;
+                document.body.appendChild(textDiv);
+
+                // ทำให้ข้อความสามารถลากได้
+                makeDraggable(textDiv, textObj);
+            });
+        }
+
+        function makeDraggable(element, textObj) {
+            let offsetX, offsetY;
+
+            element.addEventListener('mousedown', (e) => {
+                offsetX = e.clientX - element.getBoundingClientRect().left;
+                offsetY = e.clientY - element.getBoundingClientRect().top;
+
+                function onMouseMove(moveEvent) {
+                    const x = moveEvent.clientX - pdfCanvas.offsetLeft - offsetX;
+                    const y = moveEvent.clientY - pdfCanvas.offsetTop - offsetY;
+
+                    // ปรับตำแหน่งของข้อความ
+                    element.style.left = `${x}px`;
+                    element.style.top = `${y}px`;
+                }
+
+                function onMouseUp() {
+                    const x = parseFloat(element.style.left);
+                    const y = parseFloat(element.style.top);
+                    textObj.x = x;
+                    textObj.y = pdfCanvas.height - y; // ปรับแก้ y ให้เข้ากับ canvas
+
+                    // ลบ listener
+                    document.removeEventListener('mousemove', onMouseMove);
+                    document.removeEventListener('mouseup', onMouseUp);
+
+                    updatePdfWithText(); // อัปเดต PDF
+                    renderPage(pageNum); // อัปเดตการแสดงผล
+                }
+
+                document.addEventListener('mousemove', onMouseMove);
+                document.addEventListener('mouseup', onMouseUp);
+            });
+        }
+
+        async function updatePdfWithText() {
+            const page = pdfDoc.getPage(pageNum - 1);
+            const { width, height } = page.getSize(); // รับขนาดหน้า
+
+            // ลบข้อความเก่าทั้งหมดก่อนที่จะวาดใหม่
+            for (const textObj of draggableTexts) {
+                await page.drawText(textObj.text, {
+                    x: textObj.x,
+                    y: height - textObj.y, // ปรับ y ให้เข้ากับ PDF coordinate
+                    size: 12,
+                    color: PDFLib.rgb(0, 0, 0), // สีดำ
+                });
+            }
+
+            currentPdfBytes = await pdfDoc.save(); // บันทึก PDF ใหม่
+        }
+
+        addTextBtn.addEventListener('click', () => {
+            const text = prompt("Enter text to add to PDF:");
+            if (text) {
+                const textObj = { text: text, x: 50, y: 500 }; // ตำแหน่งเริ่มต้น
+                draggableTexts.push(textObj);
+                renderPage(pageNum); // อัปเดตการแสดงผล
+            }
+        });
+
+        savePdfBtn.addEventListener('click', async () => {
+            // ตรวจสอบว่า PDF ถูกโหลดและแก้ไขแล้ว
+            if (currentPdfBytes) {
+                const blob = new Blob([currentPdfBytes], { type: 'application/pdf' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'modified.pdf';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            } else {
+                alert('No PDF to save. Please upload a PDF file first.');
+            }
+        });
+    </script>
+</body>
+</html>

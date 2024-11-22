@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Editor แบบง่าย</title>
+    <style>
+        body { font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; }
+        h1 { color: #333; }
+        canvas { border: 1px solid #ccc; cursor: crosshair; margin-top: 10px; }
+        .controls { margin: 20px 0; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; margin-right: 10px; }
+    </style>
+</head>
+<body>
+    <h1>PDF Editor แบบง่าย</h1>
+    
+    <!-- อัปโหลดไฟล์ PDF -->
+    <input type="file" id="upload" accept="application/pdf">
+    
+    <!-- พื้นที่ควบคุม -->
+    <div class="controls">
+        <button id="save">บันทึก PDF ที่แก้ไขแล้ว</button>
+    </div>
+    
+    <!-- Canvas สำหรับแสดงและแก้ไข PDF -->
+    <canvas id="pdf-canvas"></canvas>
+    
+    <!-- PDF.js Library -->
+    <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
+
+    <script>
+        const fileInput = document.getElementById('upload');
+        const canvas = document.getElementById('pdf-canvas');
+        const context = canvas.getContext('2d');
+        let pdf = null;
+        let currentPage = 1;
+
+        fileInput.onchange = async (e) => {
+            const file = e.target.files[0];
+            if (file.type === 'application/pdf') {
+                pdf = await pdfjsLib.getDocument(URL.createObjectURL(file)).promise;
+                renderPage(currentPage);
+            }
+        };
+
+        // ฟังก์ชันสำหรับแสดงหน้า PDF
+        async function renderPage(pageNumber) {
+            const page = await pdf.getPage(pageNumber);
+            const viewport = page.getViewport({ scale: 1 });
+            canvas.width = viewport.width;
+            canvas.height = viewport.height;
+
+            // Render PDF ลงบน canvas
+            await page.render({ canvasContext: context, viewport }).promise;
+        }
+
+        // การวาดหรือเขียนบน Canvas
+        let drawing = false;
+        
+        canvas.onmousedown = (e) => {
+            drawing = true;
+            context.beginPath();
+            context.moveTo(e.offsetX, e.offsetY);
+        };
+
+        canvas.onmousemove = (e) => {
+            if (drawing) {
+                context.lineTo(e.offsetX, e.offsetY);
+                context.stroke();
+            }
+        };
+
+        canvas.onmouseup = () => { drawing = false; };
+        canvas.onmouseleave = () => { drawing = false; };
+
+        // บันทึก Canvas เป็น PDF ใหม่
+        document.getElementById('save').onclick = () => {
+            const link = document.createElement('a');
+            link.download = 'edited.pdf';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        };
+    </script>
+</body>
+</html>

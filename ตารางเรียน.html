@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ตารางสอน</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f4f6f8;
+            margin: 0;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            max-width: 1200px;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border-radius: 8px;
+        }
+        th, td {
+            border: 1px solid #000000;
+            padding: 15px;
+            text-align: center;
+            width: 7%; /* กำหนดให้ทุกคอลัมน์มีขนาดเท่ากัน */
+        }
+
+        th {
+            background-color: #2f80ed;
+            color: #fff;
+            font-weight: 600;
+        }
+        td.subject-cell {
+            background-color: #eaf4fe;
+            color: #333;
+            font-size: 0.95em;
+        }
+        td.empty-cell {
+            background-color: #f9f9f9;
+        }
+        tr:nth-child(odd) td.empty-cell {
+            background-color: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+
+<h2>ตารางสอน</h2>
+
+<table>
+    <tr>
+        <th>วัน / เวลา</th>
+        <th>คาบ 1<br>8.00 น. <br>- <br>9.00 น.</th>
+        <th>คาบ 2<br>9.00 น. <br>-<br> 10.00 น.</th>
+        <th>คาบ 3<br>10.00 น. <br>-<br> 11.00 น.</th>
+        <th>คาบ 4<br>11.00 น. <br>-<br> 12.00 น.</th>
+        <th>คาบ 5<br>12.00 น. <br>-<br> 13.00 น.</th>
+        <th>คาบ 6<br>13.00 น. <br>-<br> 14.00 น.</th>
+        <th>คาบ 7<br>14.00 น. <br>-<br> 15.00 น.</th>
+        <th>คาบ 8<br>15.00 น. <br>-<br> 16.00 น.</th>
+        <th>คาบ 9<br>16.00 น. <br>-<br> 17.00 น.</th>
+
+    </tr>
+    <tr>
+        <th>จันทร์</th>
+        <td colspan="1" class="subject-cell" style="background-color: Red;"></td>
+        <td colspan="3" class="subject-cell">การคิดอย่างสร้างสรรค์<br>รศ.ดร.พิมผกา โพธิลังกา<br>ห้องเรียน 23101 <br> <a style="color: olive; text-decoration: underline;">ตึกวิทยาศาสตร์ ชั้น1 ห้อง1</a> </td>
+        <td colspan="1" class="subject-cell" style="background-color: red;"></td>
+        <td colspan="5" class="subject-cell">การพัฒนาเว็บด้วยเทคโนโลยีสมัยใหม่<br>อ.ญาดามณี เขื่อนใจ<br>ห้องเรียน 39402 <br> <a style="color: olive; text-decoration: underline;">ตึกศูนย์คอมพิวเตอร์ ชั้น4 ห้อง2</a></td>
+    </tr>
+    <tr>
+        <th>อังคาร</th>
+        <td colspan="5" class="empty-cell" style="background-color: red;"></td>
+        <td colspan="4" class="subject-cell">การออกแบบเครือข่ายสำหรับวิศวกรรมซอฟต์แวร์<br>ผศ.นพนันท์ สุขสมบูรณ์<br>ห้องเรียน 39401<br> <a style="color: olive; text-decoration: underline;">ตึกศูนย์คอมพิวเตอร์ ชั้น4 ห้อง1</a></td>
+    </tr>
+    <tr>
+        <th>พุธ</th>
+        <td colspan="9" class="empty-cell" style="background-color: red;"></td>
+    </tr>
+    <tr>
+        <th>พฤหัสบดี</th>
+        <td colspan="2" class="subject-cell">การวิเคราะห์และออกแบบเชิงวัตถุ<br>ผศ.ไพจิตร สุขสมบูรณ์<br>ห้องเรียน 39402<br><a style="color: olive; text-decoration: underline;"> ตึกศูนย์คอมพิวเตอร์ ชั้น4 ห้อง2</a></td>
+        <td colspan="2" class="subject-cell">การวิเคราะห์และออกแบบเชิงวัตถุ<br>อ.ญาดามณี เขื่อนใจ<br>ห้องเรียน 39402<br><a style="color: olive; text-decoration: underline;"> ตึกศูนย์คอมพิวเตอร์ ชั้น4 ห้อง2</a></td>
+        <td colspan="1" class="empty-cell" style="background-color: red;"></td>
+        <td colspan="4" class="subject-cell">การพัฒนาโปรแกรมประยุกต์สำหรับอุปกรณ์เคลื่อนที่<br>อ.ศักดิ์ชัย ศรีมากรณ์<br>ห้องเรียน 39401<br> <a style="color: olive; text-decoration: underline;">ตึกศูนย์คอมพิวเตอร์ ชั้น4 ห้อง1</a></td>
+    </tr>
+    <tr>
+        <th>ศุกร์</th>
+        <td colspan="1" class="empty-cell" style="background-color: red;"></td>
+        <td colspan="3" class="subject-cell">กฎหมายและความเป็นพลเมืองไทย<br>อ.นิศาชล พรมดี<br>ห้องเรียน 0433<br><a style="color: olive; text-decoration: underline;"> ตึกรัฐประศาสตร์ ชั้น3 ห้อง3</a></td>
+        <td colspan="1" class="empty-cell" style="background-color: red;"></td>
+        <td colspan="2" class="subject-cell">การจัดการโครงการแบบซอฟต์แวร์<br>อ.ณิชา นภาพร จงกะสิกิจ<br>ห้องเรียน 39401 <br><a style="color: olive; text-decoration: underline;"> ตึกศูนย์คอมพิวเตอร์ ชั้น4 ห้อง1</a></td>
+        <td colspan="2" class="subject-cell">การจัดการโครงการแบบซอฟต์แวร์<br>อ.ศักดิ์ชัย ศรีมากรณ์<br>ห้องเรียน 39401<br><a style="color: olive; text-decoration: underline;"> ตึกศูนย์คอมพิวเตอร์ ชั้น4 ห้อง1</a></td>
+    </tr>
+
+</table>
+
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="LCM-GCF.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คำนวณ ค.ร.น. และ ห.ร.ม.</title>
+</head>
+<body>
+
+<div class="container">
+    <h1>คำนวณ ค.ร.น. และ ห.ร.ม.</h1>
+    
+    <label for="num1">ตัวเลขที่ 1:</label>
+    <input type="number" id="num1" placeholder="กรอกตัวเลขแรก">
+    
+    <label for="num2">ตัวเลขที่ 2:</label>
+    <input type="number" id="num2" placeholder="กรอกตัวเลขที่สอง">
+    
+    <label for="num3">ตัวเลขที่ 3:</label>
+    <input type="number" id="num3" placeholder="กรอกตัวเลขที่สาม">
+    
+    <button onclick="calculate()">คำนวณ</button>
+
+    <div class="result" id="result"></div>
+</div>
+
+<script>
+    function gcd(a, b) {
+        while (b !== 0) {
+            let temp = b;
+            b = a % b;
+            a = temp;
+        }
+        return a;
+    }
+
+    function lcm(a, b) {
+        return (a * b) / gcd(a, b);
+    }
+
+    function calculate() {
+        const num1 = parseInt(document.getElementById('num1').value);
+        const num2 = parseInt(document.getElementById('num2').value);
+        const num3 = parseInt(document.getElementById('num3').value);
+
+        if (isNaN(num1) || isNaN(num2) || isNaN(num3)) {
+            document.getElementById('result').innerHTML = "กรุณากรอกตัวเลขให้ครบถ้วน";
+            return;
+        }
+
+        // ห.ร.ม. (GCD) ของสามจำนวน
+        const gcd12 = gcd(num1, num2);
+        const gcd123 = gcd(gcd12, num3);
+
+        // ค.ร.น. (LCM) ของสามจำนวน
+        const lcm12 = lcm(num1, num2);
+        const lcm123 = lcm(lcm12, num3);
+
+        document.getElementById('result').innerHTML = `
+            <p>ห.ร.ม. ของ ${num1}, ${num2}, และ ${num3} คือ: ${gcd123}</p>
+            <p>ค.ร.น. ของ ${num1}, ${num2}, และ ${num3} คือ: ${lcm123}</p>
+        `;
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แสดงข้อมูลไม่ซ้ำ</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            max-width: 600px;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        p {
+            text-align: center;
+            color: #555;
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            resize: none;
+            outline: none;
+            box-sizing: border-box;
+        }
+        textarea:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.25);
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            font-size: 16px;
+            color: #333;
+            white-space: pre-wrap;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            textarea {
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="ข้อมูลซ้ำ.html"><button type="button" class="btn btn-primary">ตรวจสอบข้อมูลซ้ำ</button></a>
+        <a href="ข้อมูลไม่ซ้ำ.html"><button type="button" class="btn btn-primary">ตรวจสอบข้อมูลที่ไม่ซ้ำ</button></a>
+        <h1>แสดงข้อมูลไม่ซ้ำ</h1>
+        <p>กรอกข้อมูลแต่ละรายการแยกด้วยบรรทัดใหม่</p>
+        <textarea id="dataInput" placeholder="กรอกข้อมูลที่นี่..."></textarea>
+        <button onclick="displayUnique()">แสดงข้อมูลที่ไม่ซ้ำ</button>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function displayUnique() {
+            const dataInput = document.getElementById('dataInput').value.trim();
+            const dataArray = dataInput.split(/\r?\n/).map(item => item.trim());
+
+            // ใช้ Map เพื่อเก็บข้อมูลที่ไม่ซ้ำพร้อมตำแหน่งบรรทัดทั้งหมดที่พบ
+            const lineMap = new Map();
+            dataArray.forEach((item, index) => {
+                if (item !== "") {
+                    if (lineMap.has(item)) {
+                        lineMap.get(item).push(index + 1); // เก็บบรรทัดที่พบ
+                    } else {
+                        lineMap.set(item, [index + 1]);
+                    }
+                }
+            });
+
+            // แสดงผลลัพธ์
+            const resultDiv = document.getElementById('result');
+            if (lineMap.size > 0) {
+                let resultText = "ข้อมูลที่ไม่ซ้ำและบรรทัดที่พบ:\n";
+                lineMap.forEach((lines, item) => {
+                    resultText += `${item} (พบที่บรรทัด: ${lines.join(', ')})\n`;
+                });
+                resultDiv.innerHTML = resultText;
+                resultDiv.style.backgroundColor = "#e6ffe6"; // สีพื้นหลังเมื่อมีข้อมูลแสดง
+                resultDiv.style.border = "1px solid #4dff88";
+            } else {
+                resultDiv.innerHTML = "ไม่มีข้อมูลให้แสดง";
+                resultDiv.style.backgroundColor = "#ffe6e6"; // สีพื้นหลังเมื่อไม่มีข้อมูล
+                resultDiv.style.border = "1px solid #ff4d4d";
+            }
+        }
+    </script>
+</body>
+</html>
